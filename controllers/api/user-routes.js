@@ -53,11 +53,14 @@ router.post('/',(req,res)=>{
         email: req.body.email,
         password: req.body.password
     })
-    .then(userData => res.json(userData))
-    .catch(err => {
-        console.log(err);
-        res.status(500).json(err);
-    })
+    .then(userData => {
+        req.session.save(()=> {
+            req.session.user_id = userData.id;
+            req.session.username = userData.username;
+            req.session.LoggedIN = true;
+            res.json(userData);
+        });
+    });
 });
 router.post('/login', (req,res)=> {
     User.findOne({
